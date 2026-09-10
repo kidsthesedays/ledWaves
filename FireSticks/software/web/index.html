@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Sticks - LED Control</title>
+    <script src="lib/p5.js"></script>
+    <script src="lib/p5.gui.js"></script>
+    <script src="lib/quicksettings.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fire Sticks Control</h1>
+            <p class="subtitle">ILLUTRON Kunst Pa Kajan - LED Control System</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                <div id="connection-status" class="status-box">
+                    <span id="status-text">Disconnected</span>
+                    <span id="status-indicator"></span>
+                </div>
+                
+                <div id="canvas-container"></div>
+                
+                <div class="controls">
+                    <h3>LED Preview & Mapping</h3>
+                    <div id="preview-canvas"></div>
+                </div>
+            </div>
+            
+            <div class="settings-panel">
+                <h3>Settings</h3>
+                <div id="gui-container"></div>
+            </div>
+        </div>
+        
+        <div class="advanced-controls">
+            <h3>Advanced Controls</h3>
+            <div class="button-grid">
+                <button onclick="setMode('fire')" class="mode-btn">Fire Mode</button>
+                <button onclick="setMode('rainbow')" class="mode-btn">Rainbow Mode</button>
+                <button onclick="setMode('solid')" class="mode-btn">Solid Color</button>
+                <button onclick="setMode('off')" class="mode-btn">Turn Off</button>
+            </div>
+            
+            <div class="pixel-controls">
+                <h4>Direct Pixel Control</h4>
+                <div>
+                    <label for="pixel-index">Pixel:</label>
+                    <input type="number" id="pixel-index" min="0" max="239" value="0">
+                    <label for="pixel-color">Color:</label>
+                    <input type="color" id="pixel-color" value="#ff0000">
+                    <button onclick="setPixel()" class="pixel-btn">Set Pixel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>
