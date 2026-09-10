@@ -1,0 +1,27 @@
+{
+  "name": "fire-sticks-server",
+  "version": "1.0.0",
+  "description": "Local server for Fire Sticks LED control system - manages WebSocket connections between web interface and multiple ESP32 devices",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "node server.js 3001",
+    "start:prod": "node server.js 80"
+  },
+  "keywords": [
+    "LED",
+    "ESP32",
+    "WebSocket",
+    "FastLED",
+    "video-mapping"
+  ],
+  "author": "ILLUTRON Kunst Pa Kajan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.15.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
