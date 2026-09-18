@@ -49,7 +49,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
       {
         IPAddress ip = webSocket.remoteIP(num);
         Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
-        webSocket.sendTXT(num, "{"type":"connected","leds":240,"mode":"fire"}");
+        webSocket.sendTXT(num, R"({"type":"connected","leds":240,"mode":"fire"})");
       }
       break;
     case WStype_TEXT:
@@ -62,7 +62,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
         
         if (!error) {
           if (doc.containsKey("mode")) {
-            currentMode = doc["mode"];
+            currentMode = doc["mode"].as<String>();
             Serial.print("Mode changed to: ");
             Serial.println(currentMode);
           }
@@ -145,7 +145,7 @@ void fireEffect() {
   for( int j = 0; j < NUM_LEDS; j++) {
     CRGB color = HeatColor(heat[j]);
     int pixelHue = ((j / NUM_LEDS) * 255) + (millis() / 10);
-    color = color.lerp(CRGB::White, 32);
+    color = color.lerp8(CRGB::White, 32);
     leds[j] = color;
   }
 }
