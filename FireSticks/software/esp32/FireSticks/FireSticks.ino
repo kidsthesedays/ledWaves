@@ -19,7 +19,7 @@ CRGB leds[NUM_LEDS];
 #define FRAMES_PER_SECOND  60
 
 // WiFi Configuration - Visible SSID
-const char* ssid = "fireLED";
+const char* ssid = "FireSticks-AP";
 const char* password = "fire2026";
 const bool ssid_hidden = false;
 
@@ -201,7 +201,7 @@ void setup() {
   memset(heat, 0, sizeof(heat));
 
   // Start WiFi Access Point
-  WiFi.softAP(ssid, password, 1, 0, 4, ssid_hidden);
+  WiFi.softAP(ssid, password, 6, 0, 4, ssid_hidden);
   Serial.println("Access Point started");
   Serial.print("IP Address: ");
   Serial.println(WiFi.softAPIP());
