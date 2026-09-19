@@ -203,8 +203,26 @@ void setup() {
   Serial.println("Initializing LED strip...");
   Serial.print("  DATA_PIN: "); Serial.println(DATA_PIN);
   Serial.print("  NUM_LEDS: "); Serial.println(NUM_LEDS);
-  Serial.print("  LED_TYPE: "); Serial.println(LED_TYPE);
-  Serial.print("  COLOR_ORDER: "); Serial.println(COLOR_ORDER);
+  Serial.print("  LED_TYPE: ");
+  #if LED_TYPE == WS2811
+    Serial.println("WS2811");
+  #elif LED_TYPE == WS2812
+    Serial.println("WS2812");
+  #elif LED_TYPE == WS2812B
+    Serial.println("WS2812B");
+  #else
+    Serial.println("Unknown");
+  #endif
+  Serial.print("  COLOR_ORDER: ");
+  #if COLOR_ORDER == GRB
+    Serial.println("GRB");
+  #elif COLOR_ORDER == RGB
+    Serial.println("RGB");
+  #elif COLOR_ORDER == BRG
+    Serial.println("BRG");
+  #else
+    Serial.println("Unknown");
+  #endif
   
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   Serial.println("  LED strip initialized OK");
