@@ -189,22 +189,43 @@ void rainbowEffect() {
 void setup() {
   delay(3000); // 3 second delay for recovery
   
+  // Initialize serial first for debugging
+  Serial.begin(115200);
+  delay(1000); // Extra delay for ESP32-C3 serial initialization
+  
   // Initialize LED strip
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   
   // Set master brightness
   FastLED.setBrightness(BRIGHTNESS);
-
-  Serial.begin(115200);
   
   // Initialize heat array for fire effect
   memset(heat, 0, sizeof(heat));
 
   // Start WiFi Access Point
-  WiFi.softAP(ssid, password, 6, 0, 4, ssid_hidden);
-  Serial.println("Access Point started");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.softAPIP());
+  Serial.println("Starting WiFi Access Point...");
+  Serial.print("SSID: ");
+  Serial.println(ssid);
+  Serial.print("Password: ");
+  Serial.println(password);
+  Serial.print("Hidden: ");
+  Serial.println(ssid_hidden ? "Yes" : "No");
+  
+  bool apSuccess = WiFi.softAP(ssid, password, 6, ssid_hidden, 4);
+  
+  if (apSuccess) {
+    Serial.println("Access Point started SUCCESSFULLY");
+    Serial.print("SSID: ");
+    Serial.println(ssid);
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.softAPIP());
+    Serial.print("AP MAC: ");
+    Serial.println(WiFi.softAPmacAddress());
+    Serial.print("Station MAC: ");
+    Serial.println(WiFi.macAddress());
+  } else {
+    Serial.println("ERROR: Failed to start Access Point!");
+  }
   
   // Start WebSocket server
   webSocket.begin();
