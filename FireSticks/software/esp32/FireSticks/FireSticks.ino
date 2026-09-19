@@ -12,15 +12,15 @@
 #define DATA_PIN    5
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
-#define NUM_LEDS    240
+#define NUM_LEDS    30
 CRGB leds[NUM_LEDS];
 
 #define BRIGHTNESS          48
 #define FRAMES_PER_SECOND  60
 
 // WiFi Configuration - Visible SSID
-const char* ssid = "FireSticks-AP";
-const char* password = "firesicks2024";
+const char* ssid = "fireLED";
+const char* password = "fire2026";
 const bool ssid_hidden = false;
 
 WebServer server(80);
