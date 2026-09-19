@@ -187,29 +187,46 @@ void rainbowEffect() {
 
 // Setup
 void setup() {
+  // Early debug - this should appear FIRST
+  Serial.begin(115200);
+  while (!Serial); // Wait for serial port to connect (for USB)
+  delay(1000);
+  
+  Serial.println("\n=== FireSticks ESP32 Setup Starting ===");
+  Serial.println("Compiled:");
+  Serial.println(__DATE__ " " __TIME__);
+  Serial.println("\n--- Initializing Hardware ---");
+  
   delay(3000); // 3 second delay for recovery
   
-  // Initialize serial first for debugging
-  Serial.begin(115200);
-  delay(1000); // Extra delay for ESP32-C3 serial initialization
-  
   // Initialize LED strip
+  Serial.println("Initializing LED strip...");
+  Serial.print("  DATA_PIN: "); Serial.println(DATA_PIN);
+  Serial.print("  NUM_LEDS: "); Serial.println(NUM_LEDS);
+  Serial.print("  LED_TYPE: "); Serial.println(LED_TYPE);
+  Serial.print("  COLOR_ORDER: "); Serial.println(COLOR_ORDER);
+  
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  Serial.println("  LED strip initialized OK");
   
   // Set master brightness
+  Serial.print("Setting brightness to: "); Serial.println(BRIGHTNESS);
   FastLED.setBrightness(BRIGHTNESS);
   
   // Initialize heat array for fire effect
+  Serial.println("Initializing fire heat array...");
   memset(heat, 0, sizeof(heat));
+  Serial.println("  Heat array initialized OK");
 
   // Start WiFi Access Point
-  Serial.println("Starting WiFi Access Point...");
+  Serial.println("\n--- Starting WiFi Access Point ---");
   Serial.print("SSID: ");
   Serial.println(ssid);
   Serial.print("Password: ");
   Serial.println(password);
   Serial.print("Hidden: ");
   Serial.println(ssid_hidden ? "Yes" : "No");
+  Serial.print("Channel: 6, Max Connections: 4\n");
   
   bool apSuccess = WiFi.softAP(ssid, password, 6, ssid_hidden, 4);
   
@@ -225,6 +242,19 @@ void setup() {
     Serial.println(WiFi.macAddress());
   } else {
     Serial.println("ERROR: Failed to start Access Point!");
+    Serial.println("Trying alternative configuration...");
+    // Try without password
+    bool apSuccess2 = WiFi.softAP(ssid, NULL, 6, ssid_hidden, 4);
+    if (apSuccess2) {
+      Serial.println("Access Point started (NO PASSWORD)");
+      Serial.print("SSID: ");
+      Serial.println(ssid);
+      Serial.print("IP Address: ");
+      Serial.println(WiFi.softAPIP());
+    } else {
+      Serial.println("CRITICAL ERROR: Cannot start AP at all!");
+      Serial.println("Check if WiFi is disabled or hardware issue");
+    }
   }
   
   // Start WebSocket server
