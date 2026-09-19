@@ -189,8 +189,7 @@ void rainbowEffect() {
 void setup() {
   // Early debug - this should appear FIRST
   Serial.begin(115200);
-  while (!Serial); // Wait for serial port to connect (for USB)
-  delay(1000);
+  delay(2000); // Wait for serial port to initialize - no while(!Serial) as it can hang on some boards
   
   Serial.println("\n=== FireSticks ESP32 Setup Starting ===");
   Serial.println("Compiled:");
