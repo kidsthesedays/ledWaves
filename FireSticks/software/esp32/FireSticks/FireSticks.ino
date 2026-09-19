@@ -15,12 +15,13 @@
 #define NUM_LEDS    240
 CRGB leds[NUM_LEDS];
 
-#define BRIGHTNESS          96
+#define BRIGHTNESS          48
 #define FRAMES_PER_SECOND  60
 
-// WiFi Configuration
+// WiFi Configuration - Visible SSID
 const char* ssid = "FireSticks-AP";
 const char* password = "firesicks2024";
+const bool ssid_hidden = false;
 
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
@@ -142,11 +143,38 @@ void fireEffect() {
   }
 
   // Step 4.  Map from heat cells to LED colors
+  // White at base (high heat), orange/yellow/red at tips (low heat)
   for( int j = 0; j < NUM_LEDS; j++) {
-    CRGB color = HeatColor(heat[j]);
-    int pixelHue = ((j / NUM_LEDS) * 255) + (millis() / 10);
-    color = color.lerp8(CRGB::White, 32);
-    leds[j] = color;
+    uint8_t heatLevel = heat[j];
+    
+    // Map heat to color with white at highest intensity
+    if (heatLevel > 220) {
+      // White at peak heat
+      leds[j] = CRGB::White;
+    } else if (heatLevel > 180) {
+      // White to orange transition
+      uint8_t whiteMix = map(heatLevel, 180, 220, 255, 0);
+      uint8_t orangeMix = map(heatLevel, 180, 220, 0, 255);
+      leds[j] = CRGB(255, 165, 0).lerp8(CRGB::White, whiteMix);
+    } else if (heatLevel > 140) {
+      // Orange
+      leds[j] = CRGB(255, 165, 0);
+    } else if (heatLevel > 100) {
+      // Orange to yellow transition
+      uint8_t ratio = map(heatLevel, 100, 140, 0, 255);
+      leds[j] = CRGB(255, 165, 0).lerp8(CRGB(255, 255, 0), ratio);
+    } else if (heatLevel > 60) {
+      // Yellow
+      leds[j] = CRGB(255, 255, 0);
+    } else if (heatLevel > 20) {
+      // Yellow to red transition
+      uint8_t ratio = map(heatLevel, 20, 60, 0, 255);
+      leds[j] = CRGB(255, 255, 0).lerp8(CRGB::Red, ratio);
+    } else {
+      // Red at lowest heat, fading to black
+      leds[j] = CRGB::Red;
+      leds[j].fadeToBlackBy(map(heatLevel, 0, 20, 255, 0));
+    }
   }
 }
 
@@ -173,7 +201,7 @@ void setup() {
   memset(heat, 0, sizeof(heat));
 
   // Start WiFi Access Point
-  WiFi.softAP(ssid, password);
+  WiFi.softAP(ssid, password, 1, 0, 4, ssid_hidden);
   Serial.println("Access Point started");
   Serial.print("IP Address: ");
   Serial.println(WiFi.softAPIP());
