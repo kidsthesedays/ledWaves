@@ -1,0 +1,29 @@
+{
+  "name": "p5js-simple-serial-bridge",
+  "version": "1.0.0",
+  "description": "Serial to WebSocket bridge for p5.js <-> ESP32 communication",
+  "main": "bridge.js",
+  "scripts": {
+    "start": "node bridge.js",
+    "dev": "nodemon bridge.js",
+    "list-ports": "node -e \"const SerialPort = require('serialport'); SerialPort.list((err, ports) => { if (!err) ports.forEach(p => console.log(p.path, p.manufacturer || '')); });\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "serial",
+    "websocket",
+    "p5js",
+    "esp32",
+    "bridge"
+  ],
+  "author": "ILLUTRON Kunst Pa Kajan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "serialport": "^11.0.0",
+    "ws": "^8.15.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
