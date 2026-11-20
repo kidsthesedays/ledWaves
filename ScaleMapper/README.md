@@ -77,6 +77,23 @@ This error comes from FastLED's ESP32 startup replacement (`src/platforms/arduin
 
 Upstream this is FastLED issue #4914 class of bugs (core `io_pin_remap.h` macros mangle FastLED's own declarations).
 
+### `Sketch too big` / `text section exceeds available space`
+
+FastLEDHub (web server, WiFiManager, MQTT, OTA helpers) makes the finished
+sketch around 1.4 MB, which exceeds the ESP32's default 1.25 MB app
+partition:
+
+```
+Sketch uses 1413366 bytes (107%) of program storage space. Maximum is 1310720 bytes.
+text section exceeds available space in board
+```
+
+Fix: in *Tools > Partition Scheme* choose **Huge APP (3MB No OTA/1MB
+SPIFFS)** — or **No OTA (2MB APP/2MB SPIFFS)** if you want more space for
+the web-interface files. The default scheme reserves room for wireless
+firmware updates (OTA) you are not using when uploading over USB. There is
+no code change needed.
+
 ## Building on top
 
 Next steps this folder is set up for: per-row lengths as an extra custom
