@@ -57,6 +57,26 @@ HTTP automation endpoints (e.g. `http://<ip>/begin?index=2`, `/stop`,
 `/toggle`, `/pause`, `/restart`) are built into FastLEDHub, as are MQTT/Home
 Assistant discovery, alarm/sunset fades, and WLED/DDP/Hyperion UDP streaming.
 
+## Troubleshooting builds
+
+### `'digitalPinToGPIONumber' is not a type` / conflicting `uartSetPins`
+
+This error comes from FastLED's ESP32 startup replacement (`src/platforms/arduino/esp32_lazy_serial0_main.cpp.hpp`) colliding with the pin-remap macros of ESP32 core 3.3.2–3.3.12 on remap boards. It is not caused by this sketch. Pick one of these fixes:
+
+1. **Select the plain board** (most common cause): the remap macros only exist on boards like *Arduino Nano ESP32*. If your hardware is a generic ESP32 (Dev Module, ESP32-C3 Super Mini, S3, …), choose that board in *Tools > Board* and the error disappears.
+2. **Downgrade the ESP32 core** to 3.2.x via *Boards Manager* (esp32 by Espressif Systems). The startup replacement only engages on core ≥ 3.3.2 and stock startup compiles fine. FastLED + FastLEDHub are well-proven on 3.2.x.
+3. **Patch the library locally** (survives until the next FastLED update): in
+   `~/Documents/Arduino/libraries/FastLED/src/platforms/arduino/esp32_lazy_serial0_main.cpp.hpp`, add directly above the `extern "C" FL_LINK_WEAK bool uartSetPins(...);` line:
+   ```cpp
+   #ifdef uartSetPins
+   #undef uartSetPins
+   #endif
+   ```
+   The core's macro was rewriting the declaration's parameter names into nonsense; undef-ing it restores the C declaration. The call site is already protected with parentheses.
+4. Not recommended: keep the Nano ESP32 board and edit core `io_pin_remap.h` — it gets overwritten on every core update.
+
+Upstream this is FastLED issue #4914 class of bugs (core `io_pin_remap.h` macros mangle FastLED's own declarations).
+
 ## Building on top
 
 Next steps this folder is set up for: per-row lengths as an extra custom
